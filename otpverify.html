@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verify OTP</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #ffecd2, #fcb69f);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 30px 25px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 350px;
+      position: relative;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #0072ff, #00c6ff);
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    #result {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #d9534f;
+    }
+
+    /* Loader style */
+    .loader {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #0072ff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: none;
+      z-index: 1;
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      z-index: 1;
+      display: none;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="otpForm">
+    <h2>Enter OTP</h2>
+    <input id="otp" type="text" placeholder="Enter OTP" required><br>
+    <button type="submit">Verify</button>
+    <p id="result"></p>
+
+    <!-- Loader -->
+    <div class="overlay" id="loaderOverlay">
+      <div class="loader"></div>
+    </div>
+  </form>
+
+  <script>
+    const verifyOtpUrl = 'https://script.google.com/macros/s/AKfycbwqzN4lJ2A8lMKU4XDo0g1hkPTWLUqbD9BjqtQKGl2bkkXTkfKp3xurMFqnqJs62ZQ/exec';
+
+    document.getElementById('otpForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const email = sessionStorage.getItem('userEmail');
+      const otp = document.getElementById('otp').value;
+      const loader = document.getElementById('loaderOverlay');
+
+      if (!email) {
+        document.getElementById('result').innerText = 'No email found. Please sign up again.';
+        return;
+      }
+
+      loader.style.display = 'block'; // Show loader
+
+      fetch(verifyOtpUrl + '?email=' + encodeURIComponent(email) + '&otp=' + encodeURIComponent(otp))
+        .then(response => response.json())
+        .then(data => {
+          loader.style.display = 'none'; // Hide loader
+          if (data.status === 'success') {
+            document.getElementById('result').style.color = 'green';
+            document.getElementById('result').innerText = 'OTP Verified Successfully!';
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 1500);
+          } else {
+            document.getElementById('result').style.color = '#d9534f';
+            document.getElementById('result').innerText = 'Invalid OTP. Try again.';
+          }
+        })
+        .catch(err => {
+          loader.style.display = 'none'; // Hide loader
+          document.getElementById('result').innerText = 'Error verifying OTP: ' + err;
+        });
+    });
+  </script>
+</body>
+</html>

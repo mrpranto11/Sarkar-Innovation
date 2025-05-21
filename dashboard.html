@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #dce35b, #45b649);
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+      text-shadow: 1px 1px 2px #00000040;
+    }
+
+    p {
+      font-size: 18px;
+      margin: 8px 0;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 30px;
+      font-size: 16px;
+      background: #fff;
+      color: #45b649;
+      border: none;
+      border-radius: 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #e0e0e0;
+      transform: scale(1.05);
+    }
+
+    .card {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      backdrop-filter: blur(10px);
+      width: 90%;
+      max-width: 500px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Welcome to Your Dashboard!</h1>
+   
+    <p id="userEmailDisplay"></p>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <script>
+  const userName = sessionStorage.getItem('userName');
+  const userEmail = sessionStorage.getItem('userEmail');
+
+  if (userName) {
+    document.getElementById('welcomeText').textContent = 'Welcome ' + userName + '!';
+  }
+
+  if (userEmail) {
+    document.getElementById('userEmailDisplay').textContent = 'Logged in as: ' + userEmail;
+  }
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    sessionStorage.clear();
+    window.location.href = 'signup.html';
+  });
+</script>
+
+</body>
+</html>
