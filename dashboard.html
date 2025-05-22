@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pranto's AI Bot Dashboard</title>
+
+  <!-- Marked.js for Markdown support -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
   <style>
     body {
       margin: 0;
@@ -47,6 +51,8 @@
       padding: 15px;
       border-radius: 12px;
       margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
     }
 
     .user, .bot {
@@ -67,6 +73,14 @@
       background-color: rgba(255, 165, 0, 0.2);
       align-self: flex-start;
       margin-right: auto;
+    }
+
+    .bot pre {
+      background: rgba(0,0,0,0.3);
+      padding: 10px;
+      border-radius: 10px;
+      overflow-x: auto;
+      color: #fff;
     }
 
     .input-area {
@@ -127,7 +141,8 @@
     <button id="logoutBtn">Logout</button>
   </div>
 
-  <audio id="sendSound" src="send.mp3" preload="auto"></audio>
+  <!-- Sound -->
+  <audio id="sendSound" src="https://freesound.org/data/previews/695/695547_14247095-lq.mp3" preload="auto"></audio>
 
   <script>
     const userEmail = sessionStorage.getItem('userEmail');
@@ -149,7 +164,6 @@
 
       if (!prompt) return;
 
-      // User message
       const userMsg = document.createElement("div");
       userMsg.className = "user";
       userMsg.textContent = prompt;
@@ -158,11 +172,9 @@
       document.getElementById("prompt").value = "";
       chatBox.scrollTop = chatBox.scrollHeight;
 
-      // Sound
       sound.currentTime = 0;
       sound.play();
 
-      // Loading placeholder
       const botMsg = document.createElement("div");
       botMsg.className = "bot";
       botMsg.textContent = "Thinking...";
@@ -180,7 +192,8 @@
         });
 
         const result = await res.json();
-        botMsg.textContent = result?.candidates?.[0]?.content?.parts?.[0]?.text || "No response or error.";
+        const rawResponse = result?.candidates?.[0]?.content?.parts?.[0]?.text || "No response or error.";
+        botMsg.innerHTML = marked.parse(rawResponse);
       } catch (err) {
         botMsg.textContent = "Error: " + err.message;
       }
